@@ -4,15 +4,15 @@ import java.time.LocalDateTime;
 
 public class ErrorResponse {
 
-    private LocalDateTime timeStamp;
+    private LocalDateTime timestamp;
     private int status;
     private String error;
     private String message;
     private String path;
 
-    public ErrorResponse(LocalDateTime timeStamp, int status, String error, String message, String path){
+    public ErrorResponse(LocalDateTime timestamp, int status, String error, String message, String path){
 
-        this.timeStamp = timeStamp;
+        this.timestamp = timestamp;
         this.status = status;
         this.error = error;
         this.message = message;
@@ -20,14 +20,14 @@ public class ErrorResponse {
 
     }
 
-    public void setTimeStamp(LocalDateTime timeStamp){
+    public void setTimestamp(LocalDateTime timestamp){
 
-        this.timeStamp = timeStamp;
+        this.timestamp = timestamp;
     }
 
-    public LocalDateTime getTimeStamp(){
+    public LocalDateTime getTimestamp(){
 
-        return timeStamp;
+        return timestamp;
     }
 
     public void setStatus(int status){

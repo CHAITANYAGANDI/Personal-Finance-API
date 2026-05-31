@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import java.time.Instant;
 
 @Entity
-@Table(name = "refresh_token")
+@Table(name = "refresh_tokens")
 public class RefreshToken {
 
     @Id
@@ -72,6 +72,16 @@ public class RefreshToken {
     public void setExpiryDate(Instant expiryDate){
 
         this.expiryDate = expiryDate;
+    }
+
+    public void setRevoked(boolean revoked){
+
+        this.revoked = revoked;
+    }
+
+    public boolean isRevoked(){
+
+        return revoked;
     }
 
 
