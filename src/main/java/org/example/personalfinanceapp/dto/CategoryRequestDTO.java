@@ -8,7 +8,7 @@ import org.example.personalfinanceapp.enums.CategoryType;
 public class CategoryRequestDTO {
 
     @NotBlank
-    @Size(min = 4, max = 100)
+    @Size(min = 2, max = 100)
     private String categoryName;
 
     @NotNull

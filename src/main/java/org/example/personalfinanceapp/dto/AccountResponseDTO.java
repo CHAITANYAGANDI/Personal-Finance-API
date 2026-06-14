@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 public class AccountResponseDTO {
 
     private Long id;
-    private String accountNumber;
+    private Long accountNumber;
     private String bankName;
     private AccountType accountType;
     private BigDecimal balance;
@@ -16,7 +16,7 @@ public class AccountResponseDTO {
     private LocalDateTime updatedAt;
 
     public AccountResponseDTO(Long id,
-                              String accountNumber,
+                              Long accountNumber,
                               String bankName,
                               AccountType accountType,
                               BigDecimal balance,
@@ -36,7 +36,7 @@ public class AccountResponseDTO {
         return id;
     }
 
-    public String getAccountNumber() {
+    public Long getAccountNumber() {
         return accountNumber;
     }
 

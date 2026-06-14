@@ -10,7 +10,9 @@ import java.time.LocalDateTime;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "categories")
+@Table(name = "categories", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"categoryName, categoryType"})
+})
 public class Category {
 
     @Id
@@ -24,10 +26,15 @@ public class Category {
     @Column(nullable = false, length = 30)
     private CategoryType categoryType;
 
+    @Column(nullable = false)
+    private boolean active = true;
+
     @CreatedDate
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @LastModifiedDate
+    @Column(nullable = false)
     private LocalDateTime updatedAt;
 
 
@@ -79,6 +86,16 @@ public class Category {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public void setActive(boolean active){
+
+        this.active = active;
+    }
+
+    public boolean isActive(){
+
+        return active;
     }
 
 }

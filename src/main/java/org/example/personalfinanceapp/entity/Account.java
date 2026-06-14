@@ -18,34 +18,35 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String accountNumber;
+    @Column(nullable = false,length = 30)
+    private Long accountNumber;
 
-    @Column(nullable = false)
+    @Column(nullable = false,length = 100)
     private String bankName;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 30)
     private AccountType accountType;
 
-    @Column(nullable = false)
+    @Column(nullable = false,precision = 12, scale = 2)
     private BigDecimal balance;
 
     @CreatedDate
-    @Column(nullable = false)
+    @Column(nullable = false,updatable = false)
     private LocalDateTime createdAt;
 
     @LastModifiedDate
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id",nullable = false)
     private User user;
 
 
     public Account(){}
 
-    public Account(String accountNumber,
+    public Account(Long accountNumber,
                    String bankName,
                    AccountType accountType,
                    BigDecimal balance,
@@ -54,7 +55,7 @@ public class Account {
         this.accountNumber = accountNumber;
         this.bankName = bankName;
         this.accountType = accountType;
-        this.balance = balance;
+        this.balance = BigDecimal.ZERO;
         this.user = user;
     }
 
@@ -66,11 +67,11 @@ public class Account {
         this.id = id;
     }
 
-    public String getAccountNumber() {
+    public Long getAccountNumber() {
         return accountNumber;
     }
 
-    public void setAccountNumber(String accountNumber) {
+    public void setAccountNumber(Long accountNumber) {
         this.accountNumber = accountNumber;
     }
 
