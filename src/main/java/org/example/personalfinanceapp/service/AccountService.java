@@ -9,7 +9,6 @@ import org.example.personalfinanceapp.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -58,7 +57,10 @@ public class AccountService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(()-> new RuntimeException("User not found"));
 
-        boolean accountExists = accountRepository.existsByBankNameAndAccountType(accountRequestDTO.getBankName(),accountRequestDTO.getAccountType());
+        boolean accountExists = accountRepository
+                .existsByUserIdAndBankNameIgnoreCaseAndAccountType(user.getId(),
+                        accountRequestDTO.getBankName(),
+                        accountRequestDTO.getAccountType());
 
         if(accountExists){
 
@@ -67,13 +69,10 @@ public class AccountService {
 
         Long accountNumber = generateUniqueAccountNumber();
 
-        BigDecimal balance = BigDecimal.ZERO;
-
         Account account = new Account(
                 accountNumber,
                 accountRequestDTO.getBankName(),
                 accountRequestDTO.getAccountType(),
-                balance,
                 user);
 
         Account savedAccount = accountRepository.save(account);
@@ -88,9 +87,21 @@ public class AccountService {
         User user = userRepository.findByEmail(email).orElseThrow(()-> new RuntimeException("User not found"));
 
         return accountRepository
-                .findAllById(user.getId())
+                .findByUserId(user.getId())
                 .stream()
                 .map(this::convertToResponseDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void deleteBankAccount(Long id, String email){
+
+        User user = userRepository.findByEmail(email).orElseThrow(()-> new RuntimeException("User not found"));
+
+        Account account = accountRepository.findByUserIdAndId(user.getId(),id)
+                .orElseThrow(()-> new RuntimeException("Account not found"));
+
+        accountRepository.delete(account);
+
     }
 }

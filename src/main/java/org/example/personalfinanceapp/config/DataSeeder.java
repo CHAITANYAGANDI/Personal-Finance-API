@@ -60,7 +60,7 @@ public class DataSeeder implements CommandLineRunner {
 
             Category category = new Category(categoryName,categoryType);
 
-            Category savedCategory = categoryRepository.save(category);
+            categoryRepository.save(category);
         }
 
     }

@@ -15,7 +15,7 @@ import java.util.List;
 @RequestMapping("/api/v1/accounts")
 public class AccountController {
 
-    private AccountService accountService;
+    private final AccountService accountService;
 
     public  AccountController(AccountService accountService){
 
@@ -23,7 +23,7 @@ public class AccountController {
 
     }
 
-    @PostMapping("/add-account")
+    @PostMapping
     public ResponseEntity<AccountResponseDTO> addBankAccount(
             Authentication authentication,
             @Valid @RequestBody AccountRequestDTO accountRequestDTO){
@@ -35,7 +35,7 @@ public class AccountController {
         return new ResponseEntity<>(addAccount, HttpStatus.CREATED);
     }
 
-    @GetMapping("/get-accounts")
+    @GetMapping
     public ResponseEntity<List<AccountResponseDTO>> getAllBankAccounts(Authentication authentication){
 
         String email = authentication.getName();
@@ -43,5 +43,15 @@ public class AccountController {
         List<AccountResponseDTO> allBankAccounts = accountService.getAllBankAccounts(email);
 
         return ResponseEntity.ok(allBankAccounts);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteBankAccount(@PathVariable Long id, Authentication authentication){
+
+        String email = authentication.getName();
+
+        accountService.deleteBankAccount(id,email);
+
+        return ResponseEntity.noContent().build();
     }
 }
