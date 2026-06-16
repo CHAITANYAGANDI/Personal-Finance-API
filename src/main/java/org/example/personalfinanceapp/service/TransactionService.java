@@ -253,28 +253,30 @@ public class TransactionService {
     }
 
     @Transactional(readOnly = true)
-    public List<TransactionResponseDTO> getAllTransactions(String email){
-
-        User user = userRepository.findByEmail(email).orElseThrow(()-> new RuntimeException("User not found"));
-
-        return transactionRepository.findByUserId(user.getId())
-                .stream()
-                .map(this::convertToResponseDTO)
-                .collect(Collectors.toList());
-
-    }
-
-
-    @Transactional(readOnly = true)
-    public List<TransactionResponseDTO> getSpecifiedTransactions(String email, TransactionType transactionType){
+    public List<TransactionResponseDTO> getAllTransactions(String email, TransactionType transactionType){
 
         User user = userRepository.findByEmail(email).orElseThrow(()-> new RuntimeException("User not found"));
 
         List<Transaction> transactions;
 
-        return transactionRepository.findByUserIdAndTransactionType(user.getId(), transactionType)
+        if(transactionType == null){
+
+            transactions = transactionRepository
+                    .findByUserIdOrderByTransactionDateDescCreatedAtDesc(user.getId());
+        }
+
+        else{
+
+            transactions = transactionRepository
+                    .findByUserIdAndTransactionTypeOrderByTransactionDateDescCreatedAtDesc(user.getId(), transactionType);
+        }
+
+        return transactions
                 .stream()
                 .map(this::convertToResponseDTO)
                 .collect(Collectors.toList());
+
     }
+
+
 }

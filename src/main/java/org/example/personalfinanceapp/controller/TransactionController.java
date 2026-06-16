@@ -35,25 +35,16 @@ public class TransactionController {
     }
 
     @GetMapping
-    public ResponseEntity<List<TransactionResponseDTO>> getAllTransactions(Authentication authentication){
+    public ResponseEntity<List<TransactionResponseDTO>> getAllTransactions
+            (Authentication authentication,
+             @RequestParam(required = false) TransactionType transactionType){
 
         String email = authentication.getName();
 
-        List<TransactionResponseDTO> listOfAllTransactions = transactionService.getAllTransactions(email);
+        List<TransactionResponseDTO> listOfAllTransactions = transactionService.getAllTransactions(email,transactionType);
 
         return ResponseEntity.ok(listOfAllTransactions);
     }
 
-    @GetMapping
-    public ResponseEntity<List<TransactionResponseDTO>> getSpecifiedTransactions
-            (Authentication authentication, @RequestParam(required = false) TransactionType transactionType){
-
-        String email = authentication.getName();
-
-        List<TransactionResponseDTO> listOfSpecifiedTransactions = transactionService
-                .getSpecifiedTransactions(email, transactionType);
-
-        return ResponseEntity.ok(listOfSpecifiedTransactions);
-    }
 
 }

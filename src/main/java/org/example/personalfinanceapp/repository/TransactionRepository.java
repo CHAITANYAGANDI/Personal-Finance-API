@@ -8,8 +8,8 @@ import java.util.List;
 
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
 
-    List<Transaction> findByUserId(Long userId);
+    List<Transaction> findByUserIdOrderByTransactionDateDescCreatedAtDesc(Long userId);
 
-    List<Transaction> findByUserIdAndTransactionType(Long userId, TransactionType transactionType);
+    List<Transaction> findByUserIdAndTransactionTypeOrderByTransactionDateDescCreatedAtDesc(Long userId, TransactionType transactionType);
 
 }
