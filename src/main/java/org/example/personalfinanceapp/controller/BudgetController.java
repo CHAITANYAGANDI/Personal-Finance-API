@@ -46,7 +46,7 @@ public class BudgetController {
         return ResponseEntity.ok(budgets);
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping("/{budgetId}")
     public ResponseEntity<BudgetResponseDTO> updateBudget(
             @PathVariable Long budgetId,
             @Valid @RequestBody BudgetRequestDTO budgetRequestDTO,
@@ -59,7 +59,7 @@ public class BudgetController {
         return ResponseEntity.ok(updatedBudget);
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{budgetId}")
     public ResponseEntity<Void> deleteBudget(
             @PathVariable Long budgetId,
             Authentication authentication

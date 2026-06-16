@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -49,13 +50,9 @@ public class BudgetService {
 
         User user = userRepository.findByEmail(email).orElseThrow(()-> new RuntimeException("User not found"));
 
-        Category category = categoryRepository.findById(budgetRequestDTO.getCategoryId())
+        Category category = categoryRepository
+                .findByIdAndCategoryTypeAndActiveTrue(budgetRequestDTO.getCategoryId(),CategoryType.EXPENSE)
                 .orElseThrow(()-> new RuntimeException("category not found"));
-
-        if(category.getCategoryType() != CategoryType.EXPENSE){
-
-            throw new RuntimeException("Budget can only be created for expense categories");
-        }
 
         boolean budgetAlreadyExists = budgetRepository.
                 existsByUserIdAndCategoryIdAndMonthAndYear(
@@ -99,30 +96,29 @@ public class BudgetService {
     @Transactional
     public BudgetResponseDTO updateBudget(Long budgetId, String email, BudgetRequestDTO budgetRequestDTO){
 
-        User user = userRepository.findByEmail(email)
+        User user = userRepository
+                .findByEmail(email)
                 .orElseThrow(()-> new RuntimeException("user not found"));
 
-        Budget budget = budgetRepository.findByUserIdAndId(user.getId(), budgetId)
+        Budget budget = budgetRepository
+                .findByUserIdAndId(user.getId(), budgetId)
                 .orElseThrow(()-> new RuntimeException("Budget not found"));
 
-        Category category = categoryRepository.findById(budgetRequestDTO.getCategoryId())
+        Category category = categoryRepository
+                .findByIdAndCategoryTypeAndActiveTrue(budgetRequestDTO.getCategoryId(),CategoryType.EXPENSE)
                 .orElseThrow(()-> new RuntimeException("category not found"));
 
-        if(category.getCategoryType() != CategoryType.EXPENSE){
 
-            throw new RuntimeException("Budget can only be created for expense categories");
-        }
 
-        boolean budgetAlreadyExists = budgetRepository.existsByUserIdAndCategoryIdAndMonthAndYear(
+        Optional<Budget> existingBudget = budgetRepository.findByUserIdAndCategoryIdAndMonthAndYear(
                 user.getId(),
                 category.getId(),
                 budgetRequestDTO.getMonth(),
                 budgetRequestDTO.getYear()
         );
 
-        if(budgetAlreadyExists){
-
-            throw new RuntimeException("budget already exists");
+        if (existingBudget.isPresent() && !existingBudget.get().getId().equals(budget.getId())) {
+            throw new RuntimeException("Budget already exists for this category, month, and year");
         }
 
         budget.setCategory(category);

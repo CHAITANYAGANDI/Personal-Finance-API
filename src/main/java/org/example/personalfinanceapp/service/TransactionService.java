@@ -15,6 +15,9 @@ import org.example.personalfinanceapp.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class TransactionService {
 
@@ -179,16 +182,16 @@ public class TransactionService {
             throw new RuntimeException("To Account is required to make a transfer");
         }
 
+        if(transactionRequestDTO.getFromAccountId().equals(transactionRequestDTO.getToAccountId())){
+
+            throw new RuntimeException("From Account and To Account should be different to make a transfer");
+        }
+
         Account fromAccount = accountRepository.findByUserIdAndId(user.getId(), transactionRequestDTO.getFromAccountId())
                 .orElseThrow(()-> new RuntimeException("account not found"));
 
         Account toAccount = accountRepository.findByUserIdAndId(user.getId(), transactionRequestDTO.getToAccountId())
                 .orElseThrow(()-> new RuntimeException("account not found"));
-
-        if(transactionRequestDTO.getFromAccountId().equals(transactionRequestDTO.getToAccountId())){
-
-            throw new RuntimeException("From Account and To Account should be different to make a transfer");
-        }
 
         if(fromAccount.getBalance().compareTo(transactionRequestDTO.getAmount()) < 0){
 
@@ -247,5 +250,31 @@ public class TransactionService {
         };
 
 
+    }
+
+    @Transactional(readOnly = true)
+    public List<TransactionResponseDTO> getAllTransactions(String email){
+
+        User user = userRepository.findByEmail(email).orElseThrow(()-> new RuntimeException("User not found"));
+
+        return transactionRepository.findByUserId(user.getId())
+                .stream()
+                .map(this::convertToResponseDTO)
+                .collect(Collectors.toList());
+
+    }
+
+
+    @Transactional(readOnly = true)
+    public List<TransactionResponseDTO> getSpecifiedTransactions(String email, TransactionType transactionType){
+
+        User user = userRepository.findByEmail(email).orElseThrow(()-> new RuntimeException("User not found"));
+
+        List<Transaction> transactions;
+
+        return transactionRepository.findByUserIdAndTransactionType(user.getId(), transactionType)
+                .stream()
+                .map(this::convertToResponseDTO)
+                .collect(Collectors.toList());
     }
 }

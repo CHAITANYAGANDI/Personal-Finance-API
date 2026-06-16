@@ -1,18 +1,25 @@
 package org.example.personalfinanceapp.dto;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
 import java.math.BigDecimal;
 
 public class BudgetRequestDTO {
 
     @NotNull
+    @Positive
     private BigDecimal monthlyLimit;
 
     @NotNull
+    @Min(1)
+    @Max(12)
     private Integer month;
 
     @NotNull
+    @Min(2000)
     private Integer year;
 
     @NotNull
