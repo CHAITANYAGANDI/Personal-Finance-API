@@ -17,14 +17,14 @@ public class DashboardResponseDTO {
 
     private List<BudgetProgressDTO> budgetProgress;
 
-    private List<TransactionResponseDTO> recentTransactions;
+    private List<RecentTransactionsDTO> recentTransactions;
 
     public DashboardResponseDTO(BigDecimal netWorth,
                                 BigDecimal income,
                                 BigDecimal expenses,
                                 BigDecimal netSaved,
                                 List<CategorySpendingDTO> categorySpending,
-                                List<TransactionResponseDTO> recentTransactions,
+                                List<RecentTransactionsDTO> recentTransactions,
                                 List<BudgetProgressDTO> budgetProgress) {
 
         this.netWorth = netWorth;
@@ -85,11 +85,11 @@ public class DashboardResponseDTO {
         this.budgetProgress = budgetProgress;
     }
 
-    public List<TransactionResponseDTO> getRecentTransactions() {
+    public List<RecentTransactionsDTO> getRecentTransactions() {
         return recentTransactions;
     }
 
-    public void setRecentTransactions(List<TransactionResponseDTO> recentTransactions) {
+    public void setRecentTransactions(List<RecentTransactionsDTO> recentTransactions) {
         this.recentTransactions = recentTransactions;
     }
 }

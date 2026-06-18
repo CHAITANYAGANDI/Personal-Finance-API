@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 
 public class BudgetProgressDTO {
 
-    private Long categoryId;
     private Long budgetId;
+    private Long categoryId;
     private String categoryName;
     private BigDecimal monthlyLimit;
     private BigDecimal spentAmount;
@@ -13,8 +13,8 @@ public class BudgetProgressDTO {
     private BigDecimal progressPercentage;
     private String status;
 
-    public BudgetProgressDTO(Long categoryId,
-                             Long budgetId,
+    public BudgetProgressDTO(Long budgetId,
+                             Long categoryId,
                              String categoryName,
                              BigDecimal monthlyLimit,
                              BigDecimal spentAmount,
@@ -22,8 +22,9 @@ public class BudgetProgressDTO {
                              BigDecimal progressPercentage,
                              String status) {
 
-        this.categoryId = categoryId;
+
         this.budgetId = budgetId;
+        this.categoryId = categoryId;
         this.categoryName = categoryName;
         this.monthlyLimit = monthlyLimit;
         this.spentAmount = spentAmount;

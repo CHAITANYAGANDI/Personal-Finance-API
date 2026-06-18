@@ -1,7 +1,7 @@
 package org.example.personalfinanceapp.controller;
 
 import org.example.personalfinanceapp.dto.DashboardResponseDTO;
-import org.example.personalfinanceapp.service.DashBoardService;
+import org.example.personalfinanceapp.service.DashboardService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,17 +13,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/dashboard")
 public class DashboardController {
 
-    private final DashBoardService dashBoardService;
+    private final DashboardService dashBoardService;
 
-    public DashboardController(DashBoardService dashboardService){
+    public DashboardController(DashboardService dashboardService){
 
         this.dashBoardService = dashboardService;
     }
 
     @GetMapping
     public ResponseEntity<DashboardResponseDTO> getDashboard(Authentication authentication,
-                                                             @RequestParam Integer month,
-                                                             @RequestParam Integer year){
+                                                             @RequestParam(required = false) Integer month,
+                                                             @RequestParam(required = false) Integer year){
 
         String email = authentication.getName();
 

@@ -29,8 +29,12 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
                                                 @Param("endDate") LocalDate endDate);
 
 
+
+    List<Transaction> findTop5ByUserIdOrderByTransactionDateDescCreatedAtDesc(Long userId);
+
+
     @Query("""
-            SELECT t.category.id, t.category.name, SUM(t.amount)
+            SELECT t.category.id, t.category.categoryName, SUM(t.amount)
             FROM Transaction t
             WHERE t.user.id = :userId
             AND t.transactionType = :transactionType

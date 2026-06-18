@@ -1,9 +1,8 @@
 package org.example.personalfinanceapp.service;
 
-import org.example.personalfinanceapp.dto.BudgetProgressDTO;
-import org.example.personalfinanceapp.dto.CategorySpendingDTO;
-import org.example.personalfinanceapp.dto.DashboardResponseDTO;
+import org.example.personalfinanceapp.dto.*;
 import org.example.personalfinanceapp.entity.Budget;
+import org.example.personalfinanceapp.entity.Transaction;
 import org.example.personalfinanceapp.entity.User;
 import org.example.personalfinanceapp.enums.TransactionType;
 import org.example.personalfinanceapp.repository.AccountRepository;
@@ -21,9 +20,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
-public class DashBoardService {
+public class DashboardService {
 
     private final UserRepository userRepository;
     private final AccountRepository accountRepository;
@@ -31,7 +31,7 @@ public class DashBoardService {
     private final BudgetRepository budgetRepository;
 
 
-    public DashBoardService(UserRepository userRepository,
+    public DashboardService(UserRepository userRepository,
                             AccountRepository accountRepository,
                             TransactionRepository transactionRepository,
                             BudgetRepository budgetRepository){
@@ -90,8 +90,7 @@ public class DashBoardService {
                                                                 LocalDate startDate,
                                                                 LocalDate endDate,
                                                                 Integer month,
-                                                                Integer year,
-                                                                BigDecimal totalExpenses){
+                                                                Integer year){
 
         List<Budget> budgets = budgetRepository.findByUserIdAndMonthAndYear(
                 userId,
@@ -111,7 +110,7 @@ public class DashBoardService {
 
             Long categoryId = (Long) row[0];
 
-            BigDecimal spentAmount = (BigDecimal) row[1];
+            BigDecimal spentAmount = (BigDecimal) row[2];
 
             spendingMap.put(categoryId,spentAmount);
         }
@@ -168,6 +167,43 @@ public class DashBoardService {
 
     }
 
+    private List<RecentTransactionsDTO> getRecentTransactions(Long userId) {
+        return transactionRepository.findTop5ByUserIdOrderByTransactionDateDescCreatedAtDesc(userId)
+                .stream()
+                .map(this::convertToRecentTransactionsDTO)
+                .collect(Collectors.toList());
+    }
+
+
+    private RecentTransactionsDTO convertToRecentTransactionsDTO(Transaction transaction) {
+
+        Long accountId = null;
+        String accountName = null;
+
+        Long categoryId = null;
+        String categoryName = null;
+
+        if (transaction.getAccount() != null) {
+            accountId = transaction.getAccount().getId();
+            accountName = transaction.getAccount().getBankName();
+        }
+
+        if (transaction.getCategory() != null) {
+            categoryId = transaction.getCategory().getId();
+            categoryName = transaction.getCategory().getCategoryName();
+        }
+
+        return new RecentTransactionsDTO(
+                transaction.getId(),
+                categoryId,
+                accountId,
+                transaction.getDescription(),
+                transaction.getAmount(),
+                accountName,
+                categoryName,
+                transaction.getTransactionDate()
+        );
+    }
 
     @Transactional(readOnly = true)
     public DashboardResponseDTO getDashboard(String email,
@@ -211,16 +247,17 @@ public class DashBoardService {
                 startDate,
                 endDate,
                 selectedMonth,
-                selectedYear,
-                monthlyExpenses
+                selectedYear
         );
+
+        List<RecentTransactionsDTO> recentTransactions = getRecentTransactions(user.getId());
 
         return new DashboardResponseDTO(netWorth,
                 monthlyIncome,
                 monthlyExpenses,
                 netSaved,
                 spendingByCategory,
-                List.of(),
+                recentTransactions,
                 budgetProgressByCategory);
 
     }
